@@ -3,11 +3,14 @@ package it.lern.client;
 import it.lern.client.flickr.FlickrPhoto;
 import it.lern.client.flickr.FlickrPhotoSearch;
 import it.lern.client.flickr.FlickrPhotoSizes.Size;
+import it.lern.client.mediawiki.MediaWikiImage;
+import it.lern.client.mediawiki.MediaWikiImagesRequest;
 import it.lern.client.mediawiki.MediaWikiSuggestOracle;
 
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -75,6 +78,19 @@ public class Lernit implements EntryPoint {
 					panel.add(new Image(photo.getSourceUrl(Size.Square)));
 				}
 			} 
+		});
+		MediaWikiImagesRequest imagesRequest = new MediaWikiImagesRequest("wiktionary.org", "en");
+		imagesRequest.request(searchTerm, new AsyncCallback<JsArray<MediaWikiImage>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				caught.printStackTrace();
+			}
+			@Override
+			public void onSuccess(JsArray<MediaWikiImage> array) {
+				for (int i = 0; i < array.length(); i++) {
+					System.out.println(array.get(i).getTitle());
+				}
+			}
 		});
 	}
 	

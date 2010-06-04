@@ -27,7 +27,6 @@ public class FlickrPhotoSearch {
 				final int min = Math.min(maxNum, photos.length());
 				for (int i = 0; i < min; i++) {
 					final FlickrPhotoResult photo = photos.get(i);
-					System.out.println("requesting: " + photo.getId());
 					builder.request(Maps.of(FlickrApi.METHOD, "flickr.photos.getSizes", "photo_id", photo.getId()), new AsyncCallback<FlickrPhotoSizes>() {
 						@Override
 						public void onFailure(Throwable caught) {
@@ -42,9 +41,7 @@ public class FlickrPhotoSearch {
 						}
 						@Override
 						public void onSuccess(FlickrPhotoSizes sizes) {
-							System.out.println("success  " + photo.getId());
 							results.add(new FlickrPhoto(photo, sizes));
-							System.out.println(results.size());
 							if (failures[0] + results.size() == min) {
 								callback.onSuccess(results);
 							}
