@@ -15,4 +15,8 @@ public class FlickrPhoto {
 	public String getSourceUrl(Size size) {
 		return sizes.getSourceUrls(size);
 	}
+	
+	public String getId() {
+		return photo.getId();
+	}
 }

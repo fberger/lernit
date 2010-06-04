@@ -3,6 +3,7 @@ package it.lern.client;
 import it.lern.client.flickr.FlickrPhoto;
 import it.lern.client.flickr.FlickrPhotoSearch;
 import it.lern.client.flickr.FlickrPhotoSizes.Size;
+import it.lern.client.mediawiki.MediaWikiSuggestOracle;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextBox;
 
 /**
@@ -34,7 +36,7 @@ public class Lernit implements EntryPoint {
 	}
 	
 	private void initializeInput() {
-		final TextBox input = new TextBox();
+		final SuggestBox input = new SuggestBox(new MediaWikiSuggestOracle("wiktionary.org", "en"));
 		RootPanel.get("input").add(input);
 		input.setFocus(true);
 		final Label suggestions = new Label();
@@ -70,7 +72,7 @@ public class Lernit implements EntryPoint {
 				RootPanel panel = RootPanel.get("images");
 				panel.clear();
 				for (FlickrPhoto photo : photos) {
-					panel.add(new Image(photo.getSourceUrl(Size.Small)));
+					panel.add(new Image(photo.getSourceUrl(Size.Square)));
 				}
 			} 
 		});
