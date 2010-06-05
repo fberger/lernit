@@ -3,8 +3,9 @@ package it.lern.client;
 import it.lern.client.flickr.FlickrPhoto;
 import it.lern.client.flickr.FlickrPhotoSearch;
 import it.lern.client.flickr.FlickrPhotoSizes.Size;
+import it.lern.client.mediawiki.MediaWikiApi;
 import it.lern.client.mediawiki.MediaWikiImage;
-import it.lern.client.mediawiki.MediaWikiImagesRequest;
+import it.lern.client.mediawiki.MediaWikiOpenSearch;
 import it.lern.client.mediawiki.MediaWikiSuggestOracle;
 
 import java.util.List;
@@ -24,13 +25,14 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
-import com.google.gwt.user.client.ui.TextBox;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class Lernit implements EntryPoint {
 
+	private final MediaWikiApi mediaWikiApi = new MediaWikiApi("wiktionary.org", "en");
+	
 	/**
 	 * This is the entry point method.
 	 */
@@ -39,7 +41,7 @@ public class Lernit implements EntryPoint {
 	}
 	
 	private void initializeInput() {
-		final SuggestBox input = new SuggestBox(new MediaWikiSuggestOracle("wiktionary.org", "en"));
+		final SuggestBox input = new SuggestBox(new MediaWikiSuggestOracle(new MediaWikiOpenSearch(mediaWikiApi)));
 		RootPanel.get("input").add(input);
 		input.setFocus(true);
 		final Label suggestions = new Label();
@@ -79,8 +81,7 @@ public class Lernit implements EntryPoint {
 				}
 			} 
 		});
-		MediaWikiImagesRequest imagesRequest = new MediaWikiImagesRequest("wiktionary.org", "en");
-		imagesRequest.request(searchTerm, new AsyncCallback<JsArray<MediaWikiImage>>() {
+		mediaWikiApi.getImages(searchTerm, new AsyncCallback<JsArray<MediaWikiImage>>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				caught.printStackTrace();
@@ -89,6 +90,9 @@ public class Lernit implements EntryPoint {
 			public void onSuccess(JsArray<MediaWikiImage> array) {
 				for (int i = 0; i < array.length(); i++) {
 					System.out.println(array.get(i).getTitle());
+					System.out.println(array.get(i).getSize());
+					System.out.println(array.get(i).getDescriptionUrl());
+					System.out.println(array.get(i).getWidth());
 				}
 			}
 		});

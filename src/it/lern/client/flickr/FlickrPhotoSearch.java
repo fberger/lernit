@@ -13,7 +13,7 @@ public class FlickrPhotoSearch {
 	private final FlickrApi builder = new FlickrApi();
 	
 	public void search(String searchTerm, final int maxNum, final AsyncCallback<List<FlickrPhoto>> callback) {
-		builder.request(Maps.of(FlickrApi.METHOD, "flickr.photos.search", 
+		builder.request(Maps.map(FlickrApi.METHOD, "flickr.photos.search", 
 				"text", searchTerm), new AsyncCallback<FlickrPhotos>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -27,7 +27,7 @@ public class FlickrPhotoSearch {
 				final int min = Math.min(maxNum, photos.length());
 				for (int i = 0; i < min; i++) {
 					final FlickrPhotoResult photo = photos.get(i);
-					builder.request(Maps.of(FlickrApi.METHOD, "flickr.photos.getSizes", "photo_id", photo.getId()), new AsyncCallback<FlickrPhotoSizes>() {
+					builder.request(Maps.map(FlickrApi.METHOD, "flickr.photos.getSizes", "photo_id", photo.getId()), new AsyncCallback<FlickrPhotoSizes>() {
 						@Override
 						public void onFailure(Throwable caught) {
 							int count = ++failures[0];

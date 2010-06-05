@@ -2,6 +2,7 @@ package it.lern.client.mediawiki;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import it.lern.client.Maps;
@@ -10,12 +11,12 @@ public class MediaWikiImagesRequest {
 	
 	private final MediaWikiApi mediaWikiApi;
 
-	public MediaWikiImagesRequest(String domain, String locale) {
-		mediaWikiApi = new MediaWikiApi(domain, locale);
+	public MediaWikiImagesRequest(MediaWikiApi mediaWikiApi) {
+		this.mediaWikiApi = mediaWikiApi;
 	}
 	
 	public void request(String article, final AsyncCallback<JsArray<MediaWikiImage>> callback) {
-		mediaWikiApi.request(Maps.of(MediaWikiApi.ACTION, "query", 
+		mediaWikiApi.request(Maps.map(MediaWikiApi.ACTION, "query", 
 				"prop", "images", "titles", article), new AsyncCallback<MediaWikiImages>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -23,7 +24,24 @@ public class MediaWikiImagesRequest {
 					}
 					@Override
 					public void onSuccess(MediaWikiImages result) {
-						callback.onSuccess(result.getFiles());
+						request(result, callback);
+					}
+					
+				});
+	}
+	
+	public void request(MediaWikiImages images,	final AsyncCallback<JsArray<MediaWikiImage>> callback) {
+		System.out.println("titles" + images.getTitles().join());
+		mediaWikiApi.request(Maps.map(MediaWikiApi.ACTION, "query",
+				"titles", images.getTitles().join("|"), "prop", "imageinfo",
+				"iiprop", "url|dimensions|size"), new AsyncCallback<MediaWikiImageInfos>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						callback.onFailure(caught);
+					}
+					@Override
+					public void onSuccess(MediaWikiImageInfos result) {
+						callback.onSuccess(result.getImages());
 					}
 				});
 	}
@@ -32,12 +50,30 @@ public class MediaWikiImagesRequest {
 		@SuppressWarnings("unused")
 		protected MediaWikiImages() {
 		}
-		public final native JsArray<MediaWikiImage> getFiles() /*-{
+		public final native JsArrayString getTitles() /*-{
 			var pages = this.query.pages;
+			var titles = [];
 			for (var page in pages) {
-				return pages[page].images;
+				var images = pages[page].images;
+				for (var i = 0; i < images.length; i++) {
+					titles.push(images[i].title);
+				}
 			}
+			return titles;
 		}-*/;
 	}
-	
+
+	private static class MediaWikiImageInfos extends JavaScriptObject {
+		@SuppressWarnings("unused")
+		protected MediaWikiImageInfos() {
+		}
+		public final native JsArray<MediaWikiImage> getImages() /*-{
+			var pages = this.query.pages;
+			var images = [];
+			for (var page in pages) {
+				images.push(pages[page]);
+			}
+			return images;
+		}-*/;
+	}
 }

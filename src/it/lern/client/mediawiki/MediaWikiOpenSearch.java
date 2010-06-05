@@ -8,12 +8,12 @@ public class MediaWikiOpenSearch {
 	
 	private final MediaWikiApi mediaWikiApi;
 
-	public MediaWikiOpenSearch(String domain, String locale) {
-		mediaWikiApi = new MediaWikiApi(domain, locale);
+	public MediaWikiOpenSearch(MediaWikiApi mediaWikiApi) {
+		this.mediaWikiApi = mediaWikiApi;
 	}
 	
 	public void search(String searchTerm, final AsyncCallback<MediaWikiOpenSearchResult> callback) {
-		mediaWikiApi.request(Maps.of(MediaWikiApi.ACTION, "opensearch", "search", searchTerm), callback); 
+		mediaWikiApi.request(Maps.map(MediaWikiApi.ACTION, "opensearch", "search", searchTerm), callback); 
 	}
 	
 	

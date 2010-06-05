@@ -12,8 +12,8 @@ public class MediaWikiSuggestOracle extends SuggestOracle {
 
 	private final MediaWikiOpenSearch mediaWikiOpenSearch;
 
-	public MediaWikiSuggestOracle(String domain, String locale) {
-		mediaWikiOpenSearch = new MediaWikiOpenSearch(domain, locale);
+	public MediaWikiSuggestOracle(MediaWikiOpenSearch mediaWikiOpenSearch) {
+		this.mediaWikiOpenSearch = mediaWikiOpenSearch;
 	}
 	
 	@Override
