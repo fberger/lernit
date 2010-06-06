@@ -29,4 +29,8 @@ public class MediaWikiImage extends JavaScriptObject {
 	public final native int getHeight() /*-{
 		return this.imageinfo[0].height;
 	}-*/;
+	
+	public final native String getContentType() /*-{
+		return this.imageinfo[0].mime;
+	}-*/;
 }

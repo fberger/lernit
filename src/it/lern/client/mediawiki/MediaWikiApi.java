@@ -22,7 +22,8 @@ public class MediaWikiApi {
 	}
 	
 	public <T extends JavaScriptObject> void request(Map<String, String> parameters, AsyncCallback<T> callback) {
-		builder.requestObject(apiUrl + Uris.buildParameters(parameters), callback);
+		String url = apiUrl + Uris.buildParameters(parameters);
+		builder.requestObject(url, callback);
 	}
 	
 	public void search(String searchTerm, AsyncCallback<MediaWikiOpenSearchResult> callback) {

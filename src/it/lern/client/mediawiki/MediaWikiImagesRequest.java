@@ -31,10 +31,9 @@ public class MediaWikiImagesRequest {
 	}
 	
 	public void request(MediaWikiImages images,	final AsyncCallback<JsArray<MediaWikiImage>> callback) {
-		System.out.println("titles" + images.getTitles().join());
 		mediaWikiApi.request(Maps.map(MediaWikiApi.ACTION, "query",
 				"titles", images.getTitles().join("|"), "prop", "imageinfo",
-				"iiprop", "url|dimensions|size"), new AsyncCallback<MediaWikiImageInfos>() {
+				"iiprop", "url|dimensions|size|mime"), new AsyncCallback<MediaWikiImageInfos>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						callback.onFailure(caught);

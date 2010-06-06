@@ -66,21 +66,21 @@ public class Lernit implements EntryPoint {
 	}
 	
 	private void requestFlickrPhotos(String searchTerm) {
-		FlickrPhotoSearch search = new FlickrPhotoSearch();
-		search.search(searchTerm, 4, new AsyncCallback<List<FlickrPhoto>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-			@Override
-			public void onSuccess(List<FlickrPhoto> photos) {
-				RootPanel panel = RootPanel.get("images");
-				panel.clear();
-				for (FlickrPhoto photo : photos) {
-					panel.add(new Image(photo.getSourceUrl(Size.Square)));
-				}
-			} 
-		});
+//		FlickrPhotoSearch search = new FlickrPhotoSearch();
+//		search.search(searchTerm, 4, new AsyncCallback<List<FlickrPhoto>>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				caught.printStackTrace();
+//			}
+//			@Override
+//			public void onSuccess(List<FlickrPhoto> photos) {
+//				RootPanel panel = RootPanel.get("images");
+//				panel.clear();
+//				for (FlickrPhoto photo : photos) {
+//					panel.add(new Image(photo.getSourceUrl(Size.Square)));
+//				}
+//			} 
+//		});
 		mediaWikiApi.getImages(searchTerm, new AsyncCallback<JsArray<MediaWikiImage>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -88,11 +88,15 @@ public class Lernit implements EntryPoint {
 			}
 			@Override
 			public void onSuccess(JsArray<MediaWikiImage> array) {
+				RootPanel panel = RootPanel.get("images");
+				panel.clear();
 				for (int i = 0; i < array.length(); i++) {
-					System.out.println(array.get(i).getTitle());
-					System.out.println(array.get(i).getSize());
-					System.out.println(array.get(i).getDescriptionUrl());
-					System.out.println(array.get(i).getWidth());
+					MediaWikiImage image = array.get(i);
+					if (image.getContentType().startsWith("image/")) {
+						Image img = new Image(image.getUrl());
+						img.setSize("100px", "100px");
+						panel.add(img);
+					}
 				}
 			}
 		});
