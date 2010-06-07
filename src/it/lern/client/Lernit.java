@@ -38,7 +38,8 @@ public class Lernit implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		new Quizz().onModuleLoad();
+		//new Quizz().onModuleLoad();
+		new GenderQuizz().onModuleLoad();
 		// initializeGoogleTranslation();
 	}
 	

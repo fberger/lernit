@@ -3,6 +3,8 @@ package it.lern.shared;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.language.client.translation.Language;
+
 public class Entry {
 	
 	private final String entry;
@@ -32,7 +34,23 @@ public class Entry {
 	}
 	
 	public static enum Languages {
-		DE_EN
+		DE_EN(Language.GERMAN, Language.ENGLISH);
+		
+		private final Language entryLanguage;
+		private final Language translationLanguage;
+
+		private Languages(Language entryLanguage, Language translationLanguage) {
+			this.entryLanguage = entryLanguage;
+			this.translationLanguage = translationLanguage;
+		}
+		
+		public Language getEntryLanguage() {
+			return entryLanguage;
+		}
+		
+		public Language getTranslationLanguage() {
+			return translationLanguage;
+		}
 	}
 	
 	public Entry(String word, String translation, Languages languages,
@@ -61,6 +79,10 @@ public class Entry {
 	public Entry put(Class<?> key, Object value) {
 		attributes.put(key, value);
 		return this;
+	}
+	
+	public Object get(Class<?> key) {
+		return attributes.get(key);
 	}
 
 	public String getEntry() {
