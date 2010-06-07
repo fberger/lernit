@@ -11,6 +11,7 @@ import it.lern.client.mediawiki.MediaWikiSuggestOracle;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -37,7 +38,8 @@ public class Lernit implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		initializeGoogleTranslation();
+		new Quizz().onModuleLoad();
+		// initializeGoogleTranslation();
 	}
 	
 	private void initializeInput() {
