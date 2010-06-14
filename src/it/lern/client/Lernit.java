@@ -1,17 +1,11 @@
 package it.lern.client;
 
-import it.lern.client.flickr.FlickrPhoto;
-import it.lern.client.flickr.FlickrPhotoSearch;
-import it.lern.client.flickr.FlickrPhotoSizes.Size;
 import it.lern.client.mediawiki.MediaWikiApi;
 import it.lern.client.mediawiki.MediaWikiImage;
 import it.lern.client.mediawiki.MediaWikiOpenSearch;
 import it.lern.client.mediawiki.MediaWikiSuggestOracle;
 
-import java.util.List;
-
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -21,6 +15,7 @@ import com.google.gwt.language.client.translation.Language;
 import com.google.gwt.language.client.translation.Translation;
 import com.google.gwt.language.client.translation.TranslationCallback;
 import com.google.gwt.language.client.translation.TranslationResult;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -34,13 +29,17 @@ public class Lernit implements EntryPoint {
 
 	private final MediaWikiApi mediaWikiApi = new MediaWikiApi("wiktionary.org", "en");
 	
+	private LernitFrame frame = new LernitFrame();
+	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		RootPanel.get().add(frame);
+		History.fireCurrentHistoryState();
 		//new Quizz().onModuleLoad();
-		new GenderQuizz().onModuleLoad();
-		// initializeGoogleTranslation();
+		//new GenderQuizz().onModuleLoad();
+		//initializeGoogleTranslation();
 	}
 	
 	private void initializeInput() {

@@ -11,14 +11,29 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class MediaWikiApi {
 	
-	private final String apiUrl;
-	
 	public static final String ACTION = "action";
 
 	private final JsonpRequestBuilder builder = new JsonpRequestBuilder();
 
+	private final String domain;
+
+	private String locale;
+	
+	private String apiUrl;
+
 	public MediaWikiApi(String domain, String locale) {
+		this.domain = domain;
+		this.locale = locale;
+		updateApiUrl();
+	}
+	
+	private void updateApiUrl() {
 		apiUrl = "http://" + locale + "." + domain + "/w/api.php?format=json";
+	}
+	
+	public void setLocale(String locale) {
+		this.locale = locale;
+		updateApiUrl();
 	}
 	
 	public <T extends JavaScriptObject> void request(Map<String, String> parameters, AsyncCallback<T> callback) {
