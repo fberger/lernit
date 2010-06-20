@@ -19,6 +19,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 
@@ -35,7 +36,8 @@ public class Lernit implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
-		RootPanel.get().add(frame);
+		RootLayoutPanel.get().add(new LernitWidget());
+		//RootLayoutPanel.get().add(frame);
 		History.fireCurrentHistoryState();
 		//new Quizz().onModuleLoad();
 		//new GenderQuizz().onModuleLoad();

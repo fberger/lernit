@@ -1,0 +1,22 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.important {
+			font-weight: bold;
+		}
+	</ui:style>
+	<g:LayoutPanel>
+		<g:layer >
+			<g:HTMLPanel>
+				<h2>Which language would you like to learn?</h2>
+	    		<g:ListBox ui:field="languageBox"></g:ListBox>
+	    		<h2>Which language do you speak?</h2>
+	    		<g:ListBox ui:field="translationBox"></g:ListBox>
+			</g:HTMLPanel>
+		</g:layer>
+		<g:layer right="0" width="5em" bottom="0" height="2em">
+			<g:Button ui:field="nextButton">Next</g:Button>
+		</g:layer>
+	</g:LayoutPanel>
+</ui:UiBinder> 

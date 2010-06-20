@@ -1,77 +1,101 @@
 package it.lern.client;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.DecoratorPanel;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.StackPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LernitFrame extends Composite {
 
-	private FlexTable table;
-	
 	private DeckPanel mainPanel = new DeckPanel();
 
-	private StackPanel menuPanel = new StackPanel();
-	
-	private LazyEntryWidget entryWidget = new LazyEntryWidget();
-	
 	private LazyLessonWidget lessonWidget = new LazyLessonWidget();
 
+	private MenuBar menuBar;
+
+	private Label titleLabel;
+
+	private Label descriptionLabel;
+
 	public LernitFrame() {
-		table = new FlexTable();
-		table.setCellPadding(20);
-		initWidget(table);
+		LayoutPanel layout = new LayoutPanel();
+		initWidget(layout);
 		
-		menuPanel.setHeight("500px");
-		DecoratorPanel decorator = new DecoratorPanel();
-		decorator.add(menuPanel);
-		table.setWidget(0, 0, decorator);
-		table.getFlexCellFormatter().setRowSpan(0, 0, 3);
+		menuBar = new MenuBar();
+		DockLayoutPanel flowPanel = new DockLayoutPanel(Unit.EM);
+		flowPanel.addNorth(menuBar, 1.5);
+		layout.add(flowPanel);
+		layout.setWidgetLeftRight(flowPanel, 10, Unit.PCT, 10, Unit.PCT);
+				
+		MenuBar challengeMenu = new MenuBar();
+		challengeMenu.addItem("New Challenge", new Command() {
+			@Override
+			public void execute() {
+				History.newItem("entry");
+			}
+		});
+		menuBar.addItem(new MenuItem("Create", challengeMenu));
 		
-		createCreate();
 		createPracticeMenu();
 		
-		table.setWidget(0, 1, mainPanel);
-		table.getFlexCellFormatter().setColSpan(0, 1, 2);
-		table.getFlexCellFormatter().setRowSpan(0, 1, 3);
+		// title widget
+		DecoratorPanel titlePanel = new DecoratorPanel();
+		FlowPanel verticalPanel = new FlowPanel();
+		titlePanel.add(verticalPanel);
+		titleLabel = new Label("Place holder");
+		verticalPanel.add(titleLabel);
+		descriptionLabel = new Label("Longer text here");
+		verticalPanel.add(descriptionLabel);
+		flowPanel.addNorth(verticalPanel, 5);
+		
+//		layout.setWidgetLeftRight(titlePanel, 10, Unit.PCT, 10, Unit.PCT);
+//		layout.setWidgetTopHeight(titlePanel, 5, Unit.EM, 20, Unit.EM);
+		
+						
+		DecoratorPanel decoratorPanel = new DecoratorPanel();
+		decoratorPanel.add(mainPanel);
+		//mainPanel.setSize("780px", "450px");
+		//layout.add(decoratorPanel);
 		
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				String value = event.getValue();
-				if (value.contains(".")) {
+				if (value.contains("/")) {
 					if (value.startsWith("lesson")) {
 						showWidget(lessonWidget);
 					}
 				} else {
 					if (value.equals("entry")) {
-						showWidget(entryWidget);
+					//	showWidget(entryWidget);
 					}
 				} 
 			}
 		});
 	}
 	
-	private void createCreate() {
-		Hyperlink link = new Hyperlink("New Challenge", "entry");
-		VerticalPanel panel = new VerticalPanel();
-		panel.add(link);
-		menuPanel.add(panel, "Create");
-	}
-	
 	private void createPracticeMenu() {
-		VerticalPanel panel = new VerticalPanel();
-		for (Lesson lesson : Lesson.LESSONS) {
-			panel.add(new Hyperlink(lesson.getName(), "lesson." + lesson.getId()));
+		MenuBar lessonBar = new MenuBar();
+		for (final Lesson lesson : Lesson.LESSONS) {
+			lessonBar.addItem(lesson.getName(), new Command() {
+				@Override
+				public void execute() {
+					History.newItem("lesson/" + lesson.getId());
+				}
+			});
 		}
-		menuPanel.add(panel, "Practice");
+		menuBar.addItem(new MenuItem("Practice", lessonBar));
 	}
 	
 	public void showWidget(Widget widget) {

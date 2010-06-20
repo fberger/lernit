@@ -9,8 +9,12 @@ import it.lern.client.mediawiki.MediaWikiOpenSearch;
 import it.lern.client.mediawiki.MediaWikiSuggestOracle;
 
 import java.util.List;
+import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -19,69 +23,56 @@ import com.google.gwt.language.client.translation.Language;
 import com.google.gwt.language.client.translation.Translation;
 import com.google.gwt.language.client.translation.TranslationCallback;
 import com.google.gwt.language.client.translation.TranslationResult;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DecoratorPanel;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.Widget;
 
-public class EntryWidget extends Composite {
+public class EntryWidget extends TitleWidget {
 	
+	private static EntryWidgetUiBinder uiBinder = GWT.create(EntryWidgetUiBinder.class);
+
+	interface EntryWidgetUiBinder extends UiBinder<Widget, EntryWidget> {}
+	interface EntryWidgetStyle extends CssResource {
+	    String selected();
+	}
 	private MediaWikiApi mediaWikiApi = new MediaWikiApi("wiktionary.org", "de");
 	
 	private SuggestBox entryBox = new SuggestBox(new MediaWikiSuggestOracle(new MediaWikiOpenSearch(mediaWikiApi)));
 	
-	private TextArea translationArea = new TextArea();
+	@UiField
+	FlowPanel imagePanel;
 	
-	private Button saveButton = new Button("Save");
-	
-	private Button previousButton = new Button("Previous");
-	
-	private FlowPanel imagePanel = new FlowPanel();
+	@UiField
+	EntryWidgetStyle style;
 	
 	private String lastImageSearchTerm;
 
-	private final Language from;
+	private Language from;
 
-	private final Language to;
+	private Language to;
+
+	private final DisplayManager displayManager;
 	
-	public EntryWidget(Language from, Language to) {
-		this.from = from;
-		this.to = to;
-		mediaWikiApi.setLocale(from.getLangCode());
-		DecoratorPanel decoratorPanel = new DecoratorPanel();
+	private Image selectedImage;
+	
+	@UiField
+	FlowPanel entryBoxContainer;
+	
+	@UiField
+	TextArea translationBox;
 		
-		initWidget(decoratorPanel);
-		
-		FlexTable layout = new FlexTable();
-		FlexCellFormatter formatter = layout.getFlexCellFormatter();
-		//layout.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-		//layout.setSize("600px", "400px");
-		decoratorPanel.add(layout);
-		
-		layout.setText(0, 0, "Entry:");
-		layout.setWidget(1, 0, entryBox);
-		formatter.setColSpan(1, 0, 2);
-		formatter.setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
-		
-		layout.setText(2, 0, "Translation:");
-		layout.setWidget(3, 0, translationArea);
-		formatter.setColSpan(3, 0, 2);
-		
-		layout.setText(0, 2, "Picture:");
-		layout.setWidget(1, 2, imagePanel);
-		
-		layout.setText(2, 2, "Sound:");
-		
-		layout.setWidget(5, 0, previousButton);
-		layout.setWidget(5, 1, saveButton);
-		
+	public EntryWidget(DisplayManager displayManager) {
+		super("Entry", "Enter a new word or phrase to learn.");
+		this.displayManager = displayManager;
+		initWidget(uiBinder.createAndBindUi(this));
+		entryBoxContainer.add(entryBox);
+		entryBox.setLimit(4);
 		installKeyListeners();
 	}
 	
@@ -97,13 +88,13 @@ public class EntryWidget extends Composite {
 							@Override
 							protected void onCallback(TranslationResult result) {
 								String translation = result.getTranslatedText();
-								translationArea.setText(translation);
+								translationBox.setText(translation);
 							}
 						});
 						if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 							System.out.println("enter");
 							requestPhotos(current);
-							translationArea.setFocus(true);
+							translationBox.setFocus(true);
 						}
 					}
 				});
@@ -112,11 +103,30 @@ public class EntryWidget extends Composite {
 	}
 	
 	private void addImage(String imageUrl, boolean select) {
-		Image image = new Image(imageUrl);
-		image.setSize("100px", "100px");
+		if (imagePanel.getWidgetCount() == 3) {
+			return;
+		}
+		final Image image = new Image(imageUrl);
+		image.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selectImage(image);
+			}
+		});
+		if (select) {
+			selectImage(image);
+		}
 		imagePanel.add(image);
 	}
 	
+	private void selectImage(Image image) {
+		if (selectedImage != null) {
+			selectedImage.removeStyleName(style.selected());
+		}
+		image.addStyleName(style.selected());
+		selectedImage = image;
+	}
+
 	private void requestPhotos(String searchTerm) {
 		if (searchTerm.equals(lastImageSearchTerm)) {
 			return;
@@ -124,7 +134,7 @@ public class EntryWidget extends Composite {
 		lastImageSearchTerm = searchTerm;
 		imagePanel.clear();
 		requestWiktionaryPhoto(searchTerm);
-		//requestFlickrPhotos(searchTerm);
+		requestFlickrPhotos(searchTerm);
 	}
 	
 	private void requestWiktionaryPhoto(String searchTerm) {
@@ -139,7 +149,7 @@ public class EntryWidget extends Composite {
 					MediaWikiImage image = array.get(i);
 					if (image.getContentType().equals("image/jpeg")) {
 						System.out.println("wiki image " + image.getTitle());
-						addImage(image.getUrl(), true);
+						addImage(image.getUrl(), i == 0);
 					}
 				}
 			}
@@ -161,5 +171,12 @@ public class EntryWidget extends Composite {
 					}
 				} 
 			});
+	}
+
+	@Override
+	public void setData(Map<String, ?> data) {
+		from = Language.valueOf((String)data.get("language"));
+		to = Language.valueOf((String)data.get("translation"));
+		mediaWikiApi.setLocale(from.getLangCode());
 	}
 }

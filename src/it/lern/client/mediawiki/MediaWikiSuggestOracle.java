@@ -24,14 +24,15 @@ public class MediaWikiSuggestOracle extends SuggestOracle {
 			}
 			@Override
 			public void onSuccess(MediaWikiOpenSearchResult result) {
-				callback.onSuggestionsReady(request, new Response(toSuggestions(result.getResults())));
+				callback.onSuggestionsReady(request, new Response(toSuggestions(result.getResults(), request.getLimit())));
 			}
 		});
 	}
 	
-	private List<Suggestion> toSuggestions(JsArrayString array) {
+	private List<Suggestion> toSuggestions(JsArrayString array, int limit) {
 		List<Suggestion> suggestions = new ArrayList<Suggestion>();
-		for (int i = 0; i < array.length(); i++) {
+		limit = Math.min(limit, array.length());
+		for (int i = 0; i < limit; i++) {
 			String suggestion = array.get(i);
 			suggestions.add(new MultiWordSuggestOracle.MultiWordSuggestion(suggestion, suggestion));
 		}

@@ -1,0 +1,57 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style type="it.lern.client.EntryWidget.EntryWidgetStyle" >
+		.important {
+			font-weight: bold;
+		}
+		textarea {
+			width: 95%;
+		}
+		input {
+			width: 48%;	
+		}
+		img {
+			width: 100px;
+			height: 100px;
+			margin: 2px;
+			border-width: 2px;
+			border-style: solid;
+			border-color: white;
+		}
+		.selected {
+			border-color: black;
+		}
+	</ui:style>
+	<g:LayoutPanel>
+		<g:layer width="48%" height="30%">
+			<g:HTMLPanel>
+				<p>Enter word to learn in <span ui:field="language"></span>:</p>
+				<g:FlowPanel ui:field="entryBoxContainer"></g:FlowPanel>
+			</g:HTMLPanel>
+		</g:layer>
+		<g:layer height="30%" width="48%" left="52%">
+			<g:HTMLPanel>
+				<p>Enter translation:</p>
+				<g:TextArea ui:field="translationBox" visibleLines="2"></g:TextArea>
+			</g:HTMLPanel>
+		</g:layer>
+		<g:layer top="35%" bottom="3em">
+			<g:HTMLPanel>
+				<p>Associate with image:</p>
+				<g:FlowPanel ui:field="imagePanel"></g:FlowPanel>
+			</g:HTMLPanel>
+		</g:layer>
+		<g:layer top="35%" bottom="3em" left="52%" width="48%" >
+			<g:HTMLPanel>
+				<p>Sound file:</p>
+			</g:HTMLPanel>
+		</g:layer>
+		<g:layer bottom="0" left="0" height="2em" width="10em">
+			<g:Button ui:field="previousButton">Edit previous</g:Button>
+		</g:layer>
+		<g:layer bottom="0" right="0" height="2em" width="5em">
+			<g:Button ui:field="saveButton">Save</g:Button>
+		</g:layer>
+	</g:LayoutPanel>
+</ui:UiBinder> 
